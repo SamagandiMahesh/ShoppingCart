@@ -7,14 +7,14 @@ import { Cart, Product, ProductResponse, CartItem } from "../model/shopping";
     providedIn: 'root',
 })
 export class ShoppingService {
-    private subject: BehaviorSubject<Cart> = new BehaviorSubject<Cart>({
+    private cartSubject: BehaviorSubject<Cart> = new BehaviorSubject<Cart>({
         items: [],
         totalAmount: 0,
         totalQuantity: 0
     });
     private readonly productsUrl = 'https://dummyjson.com/products?limit=50&select=id,title,price,images,discountPercentage,rating';
 
-    cart$: Observable<Cart> = this.subject.asObservable();
+    cart$: Observable<Cart> = this.cartSubject.asObservable();
 
     constructor(private http: HttpClient) {}
 
@@ -23,13 +23,12 @@ export class ShoppingService {
             .pipe(
                 map((response: ProductResponse) => response.products),
                 catchError((err: any) => {
-                    console.error("Could not load products", err);
                     return throwError(() => new Error('Could not load products'));
                 })
             );
     }
 
-    private calculateTotal(cart: Cart): number {
+    private calculateTotalAmount(cart: Cart): number {
         return +cart.items.reduce((total: number, cartItem: CartItem) => total + cartItem.product.price * cartItem.quantity, 0).toFixed(2);
     }
 
@@ -38,13 +37,13 @@ export class ShoppingService {
     }
 
     private updateCart(cart: Cart): void {
-        cart.totalAmount = this.calculateTotal(cart);
+        cart.totalAmount = this.calculateTotalAmount(cart);
         cart.totalQuantity = this.calculateTotalQuantity(cart);
-        this.subject.next(cart);
+        this.cartSubject.next(cart);
     }
 
     addProduct(product: Product): void {
-        const currentCart = this.subject.getValue();
+        const currentCart = this.cartSubject.getValue();
         const existingProduct = currentCart.items.find((item: CartItem) => item.product.id === product.id);
 
         if (existingProduct) {
@@ -60,13 +59,13 @@ export class ShoppingService {
     }
 
     removeProduct(product: Product): void {
-        const currentCart = this.subject.getValue();
+        const currentCart = this.cartSubject.getValue();
         currentCart.items = currentCart.items.filter((item: CartItem) => item.product.id !== product.id);
         this.updateCart(currentCart);
     }
 
     updateProductQuantity(product: Product, quantity: number): void {
-        const currentCart = this.subject.getValue();
+        const currentCart = this.cartSubject.getValue();
         const existingProduct = currentCart.items.find((item: CartItem) => item.product.id === product.id);
 
         if (existingProduct) {
