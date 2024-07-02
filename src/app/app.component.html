@@ -1,0 +1,15 @@
+<header class="bg-gray-800 p-4 sticky top-0 z-50">
+    <nav class="lg:container lg:mx-auto flex justify-between items-center">
+      <a class="text-white hover:text-gray-300 cursor-pointer" routerLink="/shop">Shop</a>
+      <ng-container *ngIf="cart$ | async as cart">
+        <a class="text-white hover:text-gray-300 cursor-pointer" routerLink="/cart">
+          Cart <span *ngIf="cart.totalQuantity > 0">({{ cart.totalQuantity }})</span>
+        </a>
+      </ng-container>
+    </nav>
+</header>
+
+
+<main class="lg:container lg:mx-auto">
+  <router-outlet></router-outlet>
+</main>

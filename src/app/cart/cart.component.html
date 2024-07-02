@@ -1,0 +1,70 @@
+<ng-container *ngIf="cart$ | async as cart; else emptyCart">
+  <ng-container *ngIf="cart.items.length > 0; else emptyCart">
+    <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+      <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+        <div class="flex items-start justify-between">
+          <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Shopping cart</h2>
+
+        </div>
+
+        <div class="mt-8">
+          <div class="flow-root">
+            <ul role="list" class="-my-6 divide-y divide-gray-200">
+              <li *ngFor="let product of cart.items" class="flex py-6">
+                <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                  <img [src]="product.product.images[0]" [alt]="product.product.title"
+                    class="h-full w-full object-cover object-center">
+                </div>
+
+                <div class="ml-4 flex flex-1 flex-col">
+                  <div>
+                    <div class="flex justify-between text-base font-medium text-gray-900">
+                      <h3>
+                        <a href="#">{{ product.product.title }}</a>
+                      </h3>
+                      <p class="ml-4">${{ product.product.price }}</p>
+                    </div>
+                    <p *ngIf="product.product.discountPercentage" class="mt-1 text-sm text-gray-500">
+                      Discount: {{ product.product.discountPercentage }}%
+                    </p>
+                  </div>
+                  <div class="flex flex-1 items-end justify-between text-sm">
+                    <p class="text-gray-500">Qty <input id="quantity-{{ product.product.id }}" type="number"
+                        [(ngModel)]="product.quantity" (change)="updateQuantity(product.product, product.quantity)"
+                        min="1" class="w-16 p-1 border rounded-md"></p>
+                    <div class="flex">
+                      <button type="button" class="font-medium text-indigo-600 hover:text-indigo-500"
+                        (click)="removeFromCart(product.product)">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
+        <div class="flex justify-between text-base font-medium text-gray-900">
+          <p>Total</p>
+          <p>${{ cart.totalAmount }}</p>
+        </div>
+
+      </div>
+    </div>
+  </ng-container>
+</ng-container>
+
+<ng-template #emptyCart>
+  <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+    <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+      <div class="flex items-start justify-between">
+        <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Shopping cart</h2>
+      </div>
+
+      <div class="mt-8">
+        <p class="text-gray-700">The cart is empty.</p>
+      </div>
+    </div>
+  </div>
+</ng-template>

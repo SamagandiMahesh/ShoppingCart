@@ -1,0 +1,62 @@
+<div class="bg-white">
+  <div
+    class="container mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8"
+  >
+    <h2 class="text-2xl font-bold tracking-tight text-gray-900">
+      Products Page
+    </h2>
+
+    <ng-container *ngIf="products$ | async as products; else loading">
+      <div
+        class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 xl:gap-x-8"
+      >
+        <div
+          *ngFor="let product of products"
+          class="group relative bg-white rounded-lg overflow-hidden border border-slate-200 flex flex-col"
+        >
+          <div class="overflow-hidden bg-gray-200 group-hover:opacity-75 h-44">
+            <img
+              [src]="product.images[0]"
+              alt="{{ product.title }}"
+              class="h-full w-full"
+            />
+            <div
+              *ngIf="product.discountPercentage"
+              class="absolute top-0 right-0"
+            >
+              <p class="bg-red-500 text-white text-xs px-2 py-1">
+                Discount: {{ product.discountPercentage }}%
+              </p>
+            </div>
+          </div>
+          <div class="flex-grow flex flex-col">
+            <div class="mt-auto p-4">
+              <h3 class="text-sm text-gray-700">
+              
+                  <span aria-hidden="true"></span>
+                  {{ product.title }}
+               
+              </h3>
+              <p class="text-lg font-medium text-gray-900 mt-2">
+                ${{ product.price }}
+              </p>
+              <p class="text-blue-400 mt-2">Rating: {{ product.rating }}/5</p>
+            </div>
+            <button
+              (click)="addToCart(product)"
+              class="bg-slate-100 text-black w-full px-4 py-2 rounded hover:bg-slate-300 mt-4"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="flex justify-center items-center h-screen">
+    <p>Loading products...</p>
+  </div>
+</ng-template>
